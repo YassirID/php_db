@@ -1,6 +1,6 @@
 <?php
 
-include 'koneksi.php';
+include "/includes/koneksi.php";
 
 
 $sql = "SELECT nisn, nama, kelas, jurusan FROM siswa";

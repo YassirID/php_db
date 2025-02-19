@@ -18,67 +18,50 @@
 
     .fade-in {
       animation: fadeIn 1s ease-in-out;
-      /* Nama animasi, durasi, dan jenis animasi */
     }
 
     @keyframes fadeIn {
       from {
         opacity: 0;
-        /* Awalnya transparan */
       }
 
       to {
         opacity: 1;
-        /* Akhirnya terlihat penuh */
       }
     }
-
-    /* ... (Gaya CSS tabel Anda sebelumnya) ... */
-
-    /* Gaya untuk formulir tambah data */
-
-
 
     h3 {
       text-align: center;
       margin-bottom: 20px;
       color: #343a40;
-      /* Warna judul */
     }
 
     form {
       width: 50%;
-      /* Lebar formulir */
       margin: 20px auto;
-      /* Tengahkan formulir */
       padding: 20px;
       border: 1px solid #ced4da;
-      /* Garis batas formulir */
       border-radius: 5px;
-      /* Sudut tumpul */
       background-color: #f8f9fa;
-      /* Latar belakang formulir */
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      /* Efek bayangan */
     }
 
     label {
       display: block;
-      /* Label di atas input */
       margin-bottom: 5px;
       color: #343a40;
-      /* Warna label */
     }
 
     input[type="text"],
-    select {
+    select,
+    input[type="date"],
+    textarea {
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
       border: 1px solid #ced4da;
       border-radius: 5px;
       box-sizing: border-box;
-      /* Lebar input termasuk padding dan border */
     }
 
     button[type="submit"],
@@ -90,47 +73,67 @@
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.2s ease;
       text-decoration: none;
-      /* Hilangkan garis bawah pada link */
     }
 
     button[type="submit"] {
       background-color: #007bff;
-      /* Warna tombol submit */
       color: white;
     }
 
     a {
       background-color: #ffc107;
-      /* Warna tombol kembali */
       color: white;
     }
 
     button[type="submit"]:hover {
       background-color: #0056b3;
-      /* Warna hover tombol submit */
       transform: scale(1.02);
     }
 
     a:hover {
       background-color: #535a5e;
-      /* Warna hover tombol kembali */
       transform: scale(1.02);
     }
   </style>
+  <script>
+    function validateForm() {
+      const nisn = document.forms["siswaForm"]["nisn"].value;
+      const nama = document.forms["siswaForm"]["nama"].value;
+      const kelas = document.forms["siswaForm"]["kelas"].value;
+      const jurusan = document.forms["siswaForm"]["jurusan"].value;
+      const jenis_kelamin = document.forms["siswaForm"]["jenis_kelamin"].value;
+      const tanggal_lahir = document.forms["siswaForm"]["tanggal_lahir"].value;
+      const tempat_lahir = document.forms["siswaForm"]["tempat_lahir"].value;
+      const agama = document.forms["siswaForm"]["agama"].value;
+      const alamat = document.forms["siswaForm"]["alamat"].value;
+
+      if (nisn == "" || nama == "" || kelas == "" || jurusan == "" || jenis_kelamin == "" || tanggal_lahir == "" || tempat_lahir == "" || agama == "" || alamat == "") {
+        alert("Semua kolom harus diisi!");
+        return false;
+      }
+
+      if (isNaN(nisn)) {
+        alert("NIS harus berupa angka!");
+        return false;
+      }
+
+      return true;
+    }
+  </script>
 </head>
 
 <body class="fade-in">
   <h3>TAMBAH DATA SISWA</h3>
-  <form action="insert.php" method="post">
-    <label for="">Nis</label>
+  <form name="siswaForm" action="/system/insert.php" method="post" onsubmit="return validateForm()">
+    <label for="nisn">Nis</label>
     <input type="text" name="nisn">
     <br><br>
 
-    <label for="">Nama</label>
+    <label for="nama">Nama</label>
     <input type="text" name="nama">
     <br><br>
 
-    <label for="">Kelas</label>
+    <label for="kelas">Kelas</label>
     <input type="text" name="kelas">
     <br><br>
 

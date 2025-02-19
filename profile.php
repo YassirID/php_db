@@ -1,5 +1,5 @@
 <?php
-include "koneksi.php";
+include "includes/koneksi.php";
 
 $nis = $_GET["id"];
 
