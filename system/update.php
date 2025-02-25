@@ -1,5 +1,5 @@
 <?php
-include "includes/koneksi.php";
+include '../includes/koneksi.php';
 
 $nisn = $_POST['nisn'];
 $nama = $_POST['nama'];
@@ -11,56 +11,47 @@ $tempat_lahir = $_POST['tempat_lahir'];
 $agama = $_POST['agama'];
 $alamat = $_POST['alamat'];
 
-$errors = [];
+$target_dir = "../uploads/";
+$target_file = $target_dir . basename($_FILES["foto"]["name"]);
+$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-if (empty($nisn) || !is_numeric($nisn)) {
-    $errors[] = "NIS harus diisi dan berupa angka.";
+if (!empty($_FILES["foto"]["tmp_name"])) {
+    $check = getimagesize($_FILES["foto"]["tmp_name"]);
+    if ($check === false) {
+        header("Location: ../edit.php?id=$nisn&error=" . urlencode("File is not an image."));
+        exit;
+    }
+
+    if ($_FILES["foto"]["size"] > 2000000) {
+        header("Location: ../edit.php?id=$nisn&error=" . urlencode("Sorry, your file is too large."));
+        exit;
+    }
+
+    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+        header("Location: ../edit.php?id=$nisn&error=" . urlencode("Sorry, only JPG, JPEG, & PNG files are allowed."));
+        exit;
+    }
+
+    if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+        $foto = basename($_FILES["foto"]["name"]);
+    } else {
+        header("Location: ../edit.php?id=$nisn&error=" . urlencode("Sorry, there was an error uploading your file."));
+        exit;
+    }
+} else {
+    $foto = null;
 }
 
-if (empty($nama)) {
-    $errors[] = "Nama harus diisi.";
+$query = "UPDATE siswa SET nama='$nama', kelas='$kelas', jurusan='$jurusan', jenis_kelamin='$jenis_kelamin', tanggal_lahir='$tanggal_lahir', tempat_lahir='$tempat_lahir', agama='$agama', alamat='$alamat'";
+if ($foto) {
+    $query .= ", foto='$foto'";
 }
-
-if (empty($kelas)) {
-    $errors[] = "Kelas harus diisi.";
-}
-
-if (empty($jurusan)) {
-    $errors[] = "Jurusan harus dipilih.";
-}
-
-if (empty($jenis_kelamin)) {
-    $errors[] = "Jenis kelamin harus dipilih.";
-}
-
-if (empty($tanggal_lahir)) {
-    $errors[] = "Tanggal lahir harus diisi.";
-}
-
-if (empty($tempat_lahir)) {
-    $errors[] = "Tempat lahir harus diisi.";
-}
-
-if (empty($agama)) {
-    $errors[] = "Agama harus dipilih.";
-}
-
-if (empty($alamat)) {
-    $errors[] = "Alamat harus diisi.";
-}
-
-if (count($errors) > 0) {
-    $error_message = implode('<br>', $errors);
-    header("Location: list_data.php?error=" . urlencode($error_message));
-    exit;
-}
-
-$query = "UPDATE siswa SET nama='$nama', kelas='$kelas', jurusan='$jurusan', jenis_kelamin='$jenis_kelamin', tanggal_lahir='$tanggal_lahir', tempat_lahir='$tempat_lahir', agama='$agama', alamat='$alamat' WHERE nisn='$nisn'";
+$query .= " WHERE nisn='$nisn'";
 
 if ($connection->query($query) === TRUE) {
-    header("Location: list_data.php?success=Data berhasil diperbarui.");
+    header("Location: ../profile.php?id=$nisn&success=" . urlencode("Profile has been updated."));
 } else {
-    header("Location: list_data.php?error=" . urlencode("Error: " . $query . "<br>" . $connection->error));
+    header("Location: ../edit.php?id=$nisn&error=" . urlencode("Sorry, there was an error updating your profile."));
 }
 
 $connection->close();

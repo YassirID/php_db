@@ -1,5 +1,5 @@
 <?php
-include "includes/koneksi.php";
+include "../includes/koneksi.php";
 
 $format = isset($_GET['format']) ? $_GET['format'] : 'csv';
 

@@ -108,7 +108,7 @@ $siswa = $result->fetch_assoc();
 
 <body class="fade-in">
   <h3>EDIT DATA SISWA</h3>
-  <form action="/system/update.php" method="post">
+  <form action="system/update.php" method="post" enctype="multipart/form-data">
     <input type="hidden" name="nisn" value="<?= $siswa['nisn'] ?>">
 
     <label for="nama">Nama</label>
@@ -163,6 +163,10 @@ $siswa = $result->fetch_assoc();
 
     <label for="alamat">Alamat</label>
     <textarea name="alamat" id="alamat" cols="30" rows="10" required><?= $siswa['alamat'] ?></textarea>
+    <br><br>
+
+    <label for="foto">Foto Profil</label>
+    <input type="file" name="foto" accept="image/*">
     <br><br>
 
     <button type="submit">Update</button>

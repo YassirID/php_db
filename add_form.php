@@ -124,7 +124,7 @@
 
 <body class="fade-in">
   <h3>TAMBAH DATA SISWA</h3>
-  <form name="siswaForm" action="/system/insert.php" method="post" onsubmit="return validateForm()">
+  <form name="siswaForm" action="system/insert.php" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
     <label for="nisn">Nis</label>
     <input type="text" name="nisn">
     <br><br>
@@ -174,6 +174,10 @@
 
     <label for="alamat">Alamat</label>
     <textarea name="alamat" id="alamat" cols="30" rows="10"></textarea>
+    <br><br>
+
+    <label for="foto">Foto Profil</label>
+    <input type="file" name="foto" accept="image/*">
     <br><br>
 
     <button type="submit">Tambah</button>

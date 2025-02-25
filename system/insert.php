@@ -1,5 +1,5 @@
 <?php
-include 'includes/koneksi.php';
+include '../includes/koneksi.php';
 
 $nisn = $_POST['nisn'];
 $nama = $_POST['nama'];
@@ -11,56 +11,43 @@ $tempat_lahir = $_POST['tempat_lahir'];
 $agama = $_POST['agama'];
 $alamat = $_POST['alamat'];
 
-$errors = [];
+$target_dir = "../uploads/";
+$target_file = $target_dir . basename($_FILES["foto"]["name"]);
+$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-if (empty($nisn) || !is_numeric($nisn)) {
-    $errors[] = "NIS harus diisi dan berupa angka.";
-}
-
-if (empty($nama)) {
-    $errors[] = "Nama harus diisi.";
-}
-
-if (empty($kelas)) {
-    $errors[] = "Kelas harus diisi.";
-}
-
-if (empty($jurusan)) {
-    $errors[] = "Jurusan harus dipilih.";
-}
-
-if (empty($jenis_kelamin)) {
-    $errors[] = "Jenis kelamin harus dipilih.";
-}
-
-if (empty($tanggal_lahir)) {
-    $errors[] = "Tanggal lahir harus diisi.";
-}
-
-if (empty($tempat_lahir)) {
-    $errors[] = "Tempat lahir harus diisi.";
-}
-
-if (empty($agama)) {
-    $errors[] = "Agama harus dipilih.";
-}
-
-if (empty($alamat)) {
-    $errors[] = "Alamat harus diisi.";
-}
-
-if (count($errors) > 0) {
-    $error_message = implode('<br>', $errors);
-    header("Location: list_data.php?error=" . urlencode($error_message));
+// Check if image file is a actual image or fake image
+$check = getimagesize($_FILES["foto"]["tmp_name"]);
+if ($check === false) {
+    header("Location: ../add_form.php?error=" . urlencode("File is not an image."));
     exit;
 }
 
-$query = "INSERT INTO siswa (nisn, nama, kelas, jurusan, jenis_kelamin, tanggal_lahir, tempat_lahir, agama, alamat) VALUES ('$nisn', '$nama', '$kelas', '$jurusan', '$jenis_kelamin', '$tanggal_lahir', '$tempat_lahir', '$agama', '$alamat')";
+// Check file size (limit to 2MB)
+if ($_FILES["foto"]["size"] > 2000000) {
+    header("Location: ../add_form.php?error=" . urlencode("Sorry, your file is too large."));
+    exit;
+}
+
+// Allow certain file formats
+if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+    header("Location: ../add_form.php?error=" . urlencode("Sorry, only JPG, JPEG, & PNG files are allowed."));
+    exit;
+}
+
+// Try to upload file
+if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
+    $foto = basename($_FILES["foto"]["name"]);
+} else {
+    header("Location: ../add_form.php?error=" . urlencode("Sorry, there was an error uploading your file."));
+    exit;
+}
+
+$query = "INSERT INTO siswa (nisn, nama, kelas, jurusan, jenis_kelamin, tanggal_lahir, tempat_lahir, agama, alamat, foto) VALUES ('$nisn', '$nama', '$kelas', '$jurusan', '$jenis_kelamin', '$tanggal_lahir', '$tempat_lahir', '$agama', '$alamat', '$foto')";
 
 if ($connection->query($query) === TRUE) {
-    header("Location: list_data.php?success=Data berhasil ditambahkan.");
+    header("Location: ../list_data.php?success=Data berhasil ditambahkan.");
 } else {
-    header("Location: list_data.php?error=" . urlencode("Error: " . $query . "<br>" . $connection->error));
+    header("Location: ../add_form.php?error=" . urlencode("Error: " . $query . "<br>" . $connection->error));
 }
 
 $connection->close();

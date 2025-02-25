@@ -8,7 +8,7 @@ $result = $connection->query($query);
 $siswa = $result->fetch_assoc();
 ?>
 
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 
 <head>
@@ -74,12 +74,29 @@ $siswa = $result->fetch_assoc();
             transform: scale(1.05);
         }
 
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .upload-form {
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 
 <body>
 
     <h1>DETAIL DATA</h1>
+    <?php if (!empty($siswa['foto'])): ?>
+        <img src="uploads/<?= $siswa['foto'] ?>" alt="Foto Profil" class="profile-pic">
+    <?php else: ?>
+        <img src="uploads/default.png" alt="Foto Profil" class="profile-pic">
+    <?php endif; ?>
     <table>
         <tr>
             <td>NISN</td>
@@ -127,7 +144,8 @@ $siswa = $result->fetch_assoc();
             <td><?php echo $siswa["alamat"]; ?></td>
         </tr>
     </table>
-        <a href="list_data.php">kembali</a>
+    <a href="list_data.php">Kembali</a>
+
 </body>
 
 </html>

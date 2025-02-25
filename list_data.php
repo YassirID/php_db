@@ -14,7 +14,7 @@ $tahun_lahir = isset($_GET['tahun_lahir']) ? $_GET['tahun_lahir'] : '';
 
 $where_clauses = [];
 if ($search) {
-    $where_clauses[] = "(nama LIKE '%$search%' OR kelas LIKE '%$search%' OR jurusan LIKE '%$search%')";
+    $where_clauses[] = "(nisn LIKE '%$search%' OR nama LIKE '%$search%' OR kelas LIKE '%$search%' OR jurusan LIKE '%$search%')";
 }
 if ($kelas) {
     $where_clauses[] = "kelas = '$kelas'";
@@ -183,8 +183,8 @@ $total_pages = ceil($total_data / $limit);
 
     <h1>LIST DATA</h1>
     <a href="add_form.php">Tambah Data</a>
-    <a href="/system/export.php?format=csv">Export CSV</a>
-    <a href="/system/export.php?format=excel">Export Excel</a>
+    <a href="system/export.php?format=csv">Export CSV</a>
+    <a href="system/export.php?format=excel">Export Excel</a>
 
     <?php if (isset($_GET['error'])): ?>
         <div class="alert alert-danger">
@@ -200,7 +200,7 @@ $total_pages = ceil($total_data / $limit);
 
     <div class="search-container">
         <form method="GET" action="">
-            <input type="text" name="search" placeholder="Cari data..." value="<?= htmlspecialchars($search) ?>">
+            <input type="text" name="search" placeholder="Cari NISN, Nama, Kelas, atau Jurusan..." value="<?= htmlspecialchars($search) ?>">
             <button type="submit">Cari</button>
         </form>
     </div>
@@ -250,7 +250,7 @@ $total_pages = ceil($total_data / $limit);
         <thead>
         <tr>
             <th>No</th>
-            <th>NIS</th>
+            <th>NISN</th>
             <th>NAMA</th>
             <th>KELAS</th>
             <th>JURUSAN</TH>
@@ -268,7 +268,7 @@ $total_pages = ceil($total_data / $limit);
                 <td><?= $siswa['jurusan'] ?></td>
                 <td class="aksi">
                     <a href="edit.php?id=<?= $siswa['nisn'] ?>">Edit</a>
-                    <a href="delete.php?id=<?= $siswa['nisn'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">Hapus</a>
+                    <a href="system/delete.php?id=<?= $siswa['nisn'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">Hapus</a>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -283,4 +283,3 @@ $total_pages = ceil($total_data / $limit);
 </body>
 
 </html>
-
