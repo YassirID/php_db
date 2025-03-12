@@ -1,7 +1,27 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
 include "includes/koneksi.php";
 
-// Pagination settings
+// Cek peran pengguna
+$role = $_SESSION['role'];
+$nisn = $_SESSION['nisn'];
+
+$where_clauses = [];
+
+if ($role == 'siswa') {
+    // Jika pengguna adalah siswa, hanya tampilkan data mereka sendiri
+    $where_clauses[] = "nisn = '$nisn'";
+} elseif ($role != 'admin' && $role != 'guru') {
+    header("Location: profile.php?id=" . $_SESSION['user_id']);
+    exit();
+}
+
+// Pengaturan paginasi
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
@@ -12,7 +32,6 @@ $jurusan = isset($_GET['jurusan']) ? $_GET['jurusan'] : '';
 $agama = isset($_GET['agama']) ? $_GET['agama'] : '';
 $tahun_lahir = isset($_GET['tahun_lahir']) ? $_GET['tahun_lahir'] : '';
 
-$where_clauses = [];
 if ($search) {
     $where_clauses[] = "(nisn LIKE '%$search%' OR nama LIKE '%$search%' OR kelas LIKE '%$search%' OR jurusan LIKE '%$search%')";
 }
@@ -253,7 +272,7 @@ $total_pages = ceil($total_data / $limit);
             <th>NISN</th>
             <th>NAMA</th>
             <th>KELAS</th>
-            <th>JURUSAN</TH>
+            <th>JURUSAN</th>
             <th class="aksi">AKSI</TH>
         </tr>
         </thead>
@@ -267,8 +286,10 @@ $total_pages = ceil($total_data / $limit);
                 <td><?= $siswa['kelas'] ?></td>
                 <td><?= $siswa['jurusan'] ?></td>
                 <td class="aksi">
-                    <a href="edit.php?id=<?= $siswa['nisn'] ?>">Edit</a>
-                    <a href="system/delete.php?id=<?= $siswa['nisn'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">Hapus</a>
+                    <?php if ($role == 'admin'): ?>
+                        <a href="edit.php?id=<?= $siswa['nisn'] ?>">Edit</a>
+                        <a href="system/delete.php?id=<?= $siswa['nisn'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">Hapus</a>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
